@@ -58,7 +58,12 @@ public class Dpad : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointerDown
     #region Functions
     public void CalcDirection()
     {
-        direction = (foreGroundTrnsfrm.position - backGroundRect.position).normalized;
+        direction = (foreGroundTrnsfrm.position - backGroundRect.position)/ backGroundRect.sizeDelta.x;
+        if (direction.sqrMagnitude > 1)
+        {
+            direction = direction.normalized;
+        }
+
         direction.z = direction.y;
         direction.y = 0;
     }
