@@ -1,37 +1,51 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class Swipe : MonoBehaviour
 {
     #region Variables
-   [SerializeField] float InitX;
-    [SerializeField]float FinX;
-    [SerializeField]float DeltaX;
+   float InitX;
+   float FinX;
+   float DeltaX;
     /*  [HideInInspector]*/
-    public Transform CameraTransform;
-
-   
-
-
-    public Vector3 pos;
-    bool IsMoving;
+    [SerializeField] Transform CameraTransform;
+     Action<float> playerRotate;
     #endregion
     #region Mono CallBacks
-
-    private void Update()
+    private void OnEnable()
     {
-        swipe();
+        PlayerManager.update += _Update;
     }
+    private void Start()
+    {
+        if (TryGetComponent(out PlayerMovement movement))
+        {
+            playerRotate = movement.getRotateFunction();
+        }
+    }
+    private void OnDisable()
+    {
+        PlayerManager.update -= _Update;
+    }
+    //private void Update()
+    //{
+
+    //}
     #endregion
     #region Functions
+    public void _Update()
+    {
+        swipe();
+        playerRotate?.Invoke(DeltaX);
+    }
     public void swipe()
     {
         if (Input.GetMouseButtonDown(0))
         {
             if (isMouseInSwipeArea())
             {
-                IsMoving = true;
                 InitX = Input.mousePosition.x;
             }
         }
@@ -45,17 +59,20 @@ public class Swipe : MonoBehaviour
                 DeltaX = DeltaX / Screen.width * 20;
                 InitX = Input.mousePosition.x;
             }
+            else
+            {
+                DeltaX = 0;
+            }
         }
-
+        else
+        {
+            DeltaX = 0;
+        }
     }
 
     bool isMouseInSwipeArea()
     {
-        return Input.mousePosition.x > Screen.width / 2 && Input.mousePosition.y > Screen.height / 2;
+        return /*Input.mousePosition.x > Screen.width / 2 &&*/ Input.mousePosition.y > Screen.height / 2;
     }
-    #endregion
-    #region Coroutines
-
- 
     #endregion
 }

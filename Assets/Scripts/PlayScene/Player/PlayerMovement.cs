@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -11,24 +12,51 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] Transform mTransform;
     [SerializeReference] Rigidbody mRigidBody;
     [SerializeReference] float movementSpeed;
+    [SerializeReference] float rotateSpeed;
     [SerializeReference] Dpad moveDpad;
-    [SerializeReference] Dpad rotateDpad;
+
+    float eulerY;
+
     #endregion
     #region Monobehaviour callbacks
-    private void Update()
+    private void OnEnable()
     {
-
-        movement = moveDpad.Direction;
-     
-          
-
+        PlayerManager.update += _Update;
     }
-    private void FixedUpdate()
+    private void OnDisable()
     {
-        Move();
+        PlayerManager.update -= _Update;
     }
+    private void Start()
+    {
+        eulerY = mTransform.eulerAngles.y;
+    }
+    //private void Update()
+    //{
+
+   
+
+
+    //}
     #endregion
     #region Functions
+    public void _Update()
+    {
+        movement = moveDpad.Direction.z * mTransform.forward + moveDpad.Direction.x * mTransform.right;
+        Move();
+    }
+    public Action<float>   getRotateFunction()
+    {
+        return rotatePlayer;
+    }
+    void rotatePlayer(float deltaX)
+    {
+        if (deltaX * deltaX > 0)
+        {
+            eulerY += deltaX * rotateSpeed * Time.deltaTime;
+            mTransform.rotation = Quaternion.Euler(0.0f, eulerY, 0.0f);
+        }
+    }
     Vector3 getUserInput()
     {
         movementDirection = Vector3.zero;
@@ -52,8 +80,9 @@ public class PlayerMovement : MonoBehaviour
     }
     void Move()
     {
-        newPos = mTransform.position + movement * Time.deltaTime*movementSpeed;
-        mRigidBody.MovePosition(newPos);
+        mTransform.localPosition = mTransform.localPosition + movement * Time.deltaTime * movementSpeed;
+        //movement = mTransform.TransformPoint(movement);
+        //mRigidBody.MovePosition(movement);
     }
     #endregion
 }
