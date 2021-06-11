@@ -11,7 +11,7 @@ public class Bullet : MonoBehaviour
     [SerializeReference] float lifeTime = 3.0f;
     float velocity = 20.0f;
     WaitForSeconds delay;
-
+    [SerializeField] float damage = 20.0f;
     #endregion
     #region monobehaviour callbacks
     private void OnEnable()
@@ -31,7 +31,7 @@ public class Bullet : MonoBehaviour
     {
         if (collision.gameObject.TryGetComponent<IDammageable>(out var dammageAble))
         {
-            dammageAble.OnDammaged();
+            dammageAble.OnDammaged(damage);
         }
         gameObject.SetActive(false);
     }
