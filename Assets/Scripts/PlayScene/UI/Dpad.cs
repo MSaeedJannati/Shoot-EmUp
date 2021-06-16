@@ -7,26 +7,28 @@ using UnityEngine.EventSystems;
 public class Dpad : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler
 {
     #region Variables
+
+    [SerializeField] float overlapFactor;
     [SerializeField] Image backGround;
     [SerializeField] Transform foreGroundTrnsfrm;
     [SerializeField] RectTransform backGroundRect;
     Vector3 destPos = new Vector3();
-    [SerializeField] int cornerID;
-    //corner
+    //corners
     Vector3[] backCorners = new Vector3[4];
     Coroutine goBackToCenterRoutine;
-
-    [SerializeField] Transform obj;
-    [SerializeField] Vector3 direction;
+    Vector3 direction;
+    float radious;
     #endregion
     #region Properties
-   public  Vector3 Direction => direction;
+    public Vector3 Direction => direction;
     #endregion
     #region Monobehaviour callbacks
     private void Start()
     {
-
         backGroundRect.GetWorldCorners(backCorners);
+
+        radious = (backCorners[0] - backGroundRect.position).magnitude;
+        radious *= overlapFactor;
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -35,13 +37,9 @@ public class Dpad : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointerDown
         destPos = eventData.position;
         destPos.z = foreGroundTrnsfrm.position.z;
 
-        if (CheckIfInsideRect(ref destPos))
-        {
-
-            foreGroundTrnsfrm.position = destPos;
-        }
+        CalcForeGroundPos(ref destPos);
         CalcDirection();
-       
+
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -58,7 +56,7 @@ public class Dpad : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointerDown
     #region Functions
     public void CalcDirection()
     {
-        direction = (foreGroundTrnsfrm.position - backGroundRect.position)/ backGroundRect.sizeDelta.x;
+        direction = (foreGroundTrnsfrm.position - backGroundRect.position) / backGroundRect.sizeDelta.x;
         if (direction.sqrMagnitude > 1)
         {
             direction = direction.normalized;
@@ -67,26 +65,16 @@ public class Dpad : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointerDown
         direction.z = direction.y;
         direction.y = 0;
     }
-    public bool CheckIfInsideRect(ref Vector3 destPos)
+    public void CalcForeGroundPos(ref Vector3 destPos)
     {
-        if (destPos.x < backCorners[0].x)
+        if ((destPos - backGroundRect.position).sqrMagnitude > radious * radious)
         {
-            return false;
+            foreGroundTrnsfrm.position = backGroundRect.position + radious * ((destPos - backGroundRect.position).normalized);
         }
-        if (destPos.y < backCorners[0].y)
+        else
         {
-            return false;
+            foreGroundTrnsfrm.position = destPos;
         }
-        if (destPos.x > backCorners[2].x)
-        {
-            return false;
-        }
-        if (destPos.y > backCorners[2].y)
-        {
-            return false;
-        }
-
-        return true;
     }
     #endregion
     #region Coroutines

@@ -5,13 +5,14 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     #region Variables
-    
+
     [SerializeField] Transform mTransform;
     [SerializeField] Rigidbody mRigidBody;
     [SerializeReference] float lifeTime = 3.0f;
     float velocity = 20.0f;
     WaitForSeconds delay;
     [SerializeField] float damage = 20.0f;
+    [SerializeField] bool canDammageEnemies;
     #endregion
     #region monobehaviour callbacks
     private void OnEnable()
@@ -29,9 +30,28 @@ public class Bullet : MonoBehaviour
     }
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.TryGetComponent<IDammageable>(out var dammageAble))
+        if (!gameObject.activeInHierarchy)
+            return;
+        if (collision.collider.gameObject.TryGetComponent<IDammageable>(out var dammageAble))
         {
-            dammageAble.OnDammaged(damage);
+            bool shouldApply = false;
+            if (collision.collider.gameObject.tag != "Player")
+            {
+                if (canDammageEnemies)
+                {
+
+                    shouldApply = true;
+
+                }
+            }
+            else
+            {
+                shouldApply = true;
+
+
+            }
+            if (shouldApply)
+                dammageAble.OnDammaged(damage);
         }
         gameObject.SetActive(false);
     }

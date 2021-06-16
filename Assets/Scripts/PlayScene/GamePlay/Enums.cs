@@ -12,4 +12,18 @@ namespace ENUMS
         SMG,
         LMG
     }
+    [Serializable]
+    public enum CollectableType
+    {
+        FIRST_AID,
+        GOLD,
+        AMMO,
+        WEAPON
+    }
+    [Serializable]
+    public enum EnemyBehaviourType
+    {
+        BASE_RANGE,
+        BASE_MELEE
+    }
 }

@@ -10,10 +10,10 @@ public class PlayerMovement : MonoBehaviour
     Vector3 movement;
     Vector3 newPos;
     [SerializeField] Transform mTransform;
-    [SerializeReference] Rigidbody mRigidBody;
-    [SerializeReference] float movementSpeed;
-    [SerializeReference] float rotateSpeed;
-    [SerializeReference] Dpad moveDpad;
+    [SerializeField] CharacterController mController;
+    [SerializeField] float movementSpeed;
+    [SerializeField] float rotateSpeed;
+    [SerializeField] Dpad moveDpad;
 
     float eulerY;
 
@@ -80,7 +80,8 @@ public class PlayerMovement : MonoBehaviour
     }
     void Move()
     {
-        mTransform.localPosition = mTransform.localPosition + movement * Time.deltaTime * movementSpeed;
+        //mTransform.localPosition = mTransform.localPosition + movement * Time.deltaTime * movementSpeed;
+       mController.Move(movement * Time.deltaTime * movementSpeed);
         //movement = mTransform.TransformPoint(movement);
         //mRigidBody.MovePosition(movement);
     }

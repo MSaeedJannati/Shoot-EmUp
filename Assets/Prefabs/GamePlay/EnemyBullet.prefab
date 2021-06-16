@@ -49,8 +49,6 @@ MonoBehaviour:
   mTransform: {fileID: 7857723889847246004}
   mRigidBody: {fileID: 7857723889847246003}
   lifeTime: 2
-  damage: 20
-  canDammageEnemies: 1
 --- !u!135 &7857723889847246005
 SphereCollider:
   m_ObjectHideFlags: 0

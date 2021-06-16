@@ -10,11 +10,13 @@ public class PlayerShoot : MonoBehaviour
     [SerializeField] bool isMouseDown;
     [SerializeField] float recoilTime = .2f;
     float lastShootTime;
+    PlayerWeapon mWeaponReference;
     #endregion
     #region monobehaviour callbacks
     private void Start()
     {
         lastShootTime = Time.time - recoilTime;
+        TryGetComponent(out mWeaponReference);
     }
     #endregion
     #region functions
@@ -36,10 +38,14 @@ public class PlayerShoot : MonoBehaviour
     {
         if (!isMouseDown)
             return;
-        if (Time.time < lastShootTime + recoilTime)
-            return;
-        lastShootTime = Time.time;
-        CreateBullet();
+        //if (Time.time < lastShootTime + recoilTime)
+        //    return;
+        //lastShootTime = Time.time;
+        //CreateBullet();
+        mWeaponReference.shoot();
+
+
+
     }
 
     public void CreateBullet()
