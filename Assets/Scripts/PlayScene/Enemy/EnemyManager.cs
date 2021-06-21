@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.AI;
+using BaseEnemyStates;
 
 public class EnemyManager : MonoBehaviour, IDammageable
 {
@@ -25,7 +26,18 @@ public class EnemyManager : MonoBehaviour, IDammageable
     [SerializeField] float changePosPeriod = 10.0f;
 
     WaitForSeconds delay = new WaitForSeconds(.1f);
+    State currentState;
+
+
+
     #region common fields
+    #region States
+   
+
+    #endregion
+    #endregion
+    #region Properties
+    public float MinDistanceToFight => minDistanceToFight;
     #endregion
     #endregion
     #region Monobehaciour callbacks
@@ -40,6 +52,10 @@ public class EnemyManager : MonoBehaviour, IDammageable
     }
     #endregion
     #region Functions
+    void CreateStates()
+    {
+        
+    }
     void Initialize()
     {
         state = EnemyState.PRESUING;
@@ -99,6 +115,12 @@ public class EnemyManager : MonoBehaviour, IDammageable
     public void OnDie()
     {
         gameObject.SetActive(false);
+    }
+    public void SetState(State state)
+    {
+        currentState.OnExit();
+        currentState = state;
+        currentState.OnEnter();
     }
     #endregion
     #region Coroutines

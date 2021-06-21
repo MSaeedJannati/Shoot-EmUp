@@ -58,7 +58,10 @@ public class PlayerWeapon : MonoBehaviour
     }
     public void shoot()
     {
+       
         if (ammoInMagazine == 0)
+            return;
+        if (isReloading)
             return;
         if (!currentWaepon.canShoot())
             return;
@@ -95,11 +98,13 @@ public class PlayerWeapon : MonoBehaviour
     #region coroutines
     IEnumerator reloadCoroutine()
     {
+        isReloading = true;
         yield return new WaitForSeconds(currentWaepon.ReloadTime);
         calcAmmo();
         currentWaepon.reload(this);
         setAmmoIndict();
         OnAmmoChange?.Invoke(ammoInMagazine, ammoInInventory, currentWaepon.Type);
+        isReloading = false;
     }
     #endregion
 }
